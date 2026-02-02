@@ -1,7 +1,7 @@
 from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import ApplicationBuilder, CommandHandler, CallbackQueryHandler, ContextTypes
 
-TOKEN = "8400018950:AAGAK7kGJUHWe56grdVEsPdtt0j1ouLBjKM"
+TOKEN = "8179576448:AAGR15urYreu8zooAF4eXyguRNn7nqkkank"
 CHANNEL_USERNAME = "@Online_store485353"  # غيّرها إذا لزم
 
 WELCOME_TEXT = """
