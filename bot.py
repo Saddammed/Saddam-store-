@@ -2,42 +2,75 @@ from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import ApplicationBuilder, CommandHandler, CallbackQueryHandler, ContextTypes
 
 TOKEN = "8179576448:AAGR15urYreu8zooAF4eXyguRNn7nqkkank"
-CHANNEL_USERNAME = "@Online_store485353"  # قناة التليجرام (إجباري)
+CHANNEL_USERNAME = "@Online_store485353"
 
-# ===== رسالة قبل الاشتراك =====
 WELCOME_TEXT = """
 🔥 مرحباً بك {name} في *Saddam Store*!
 
 ⚡ للاستفادة من خدماتنا، يرجى الاشتراك في قنواتنا:
 
-1️⃣ قناة تليجرام (إجباري)
-2️⃣ قناة واتساب (إجباري)
-3️⃣ تيك توك (إجباري)
-4️⃣ فيسبوك (إجباري)
-
 👇 بعد الاشتراك اضغط *تم الاشتراك*:
 """
 
-# ===== رسالة بعد التحقق =====
-AFTER_TEXT = """
+MAIN_MENU_TEXT = """
 🎉 مرحباً {name} في *Saddam Store*!
 
-🔥 متجر رقمي متكامل
-🎮 PUBG | Free Fire | eFootball
-💎 TikTok Coins
-💻 منتجات رقمية حصرية
-⚡ تسليم فوري
+اختر الخدمة التي تريدها 👇
+"""
 
-👇 اختر من القائمة:
+GAMES_TEXT = """
+🔥 *شحن الألعاب*:
+
+• PUBG Mobile  
+• Free Fire  
+• eFootball  
+• TikTok Coins  
+
+📲 واتساب:
+https://wa.me/message/REDKIHRAVCUEB1
+
+💬 تيليجرام:
+https://t.me/Saddammed
+"""
+
+DIGITAL_TEXT = """
+🛒 *المنتجات الرقمية*:
+
+• Netflix  
+• Google Play  
+• Apple Store  
+• اشتراكات تطبيقات أخرى  
+
+📲 واتساب:
+https://wa.me/message/REDKIHRAVCUEB1
+
+💬 تيليجرام:
+https://t.me/Saddammed
+"""
+
+WEB_TEXT = """
+🌐 *تصميم المواقع*:
+
+• مواقع شخصية  
+• متاجر إلكترونية  
+• صفحات هبوط  
+
+تصميم عصري ومتوافق مع الجوال 📱
+
+📲 واتساب:
+https://wa.me/message/REDKIHRAVCUEB1
+
+💬 تيليجرام:
+https://t.me/Saddammed
 """
 
 # ===== /start =====
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     keyboard = [
-        [InlineKeyboardButton("🔵 قناة التليجرام", url="https://t.me/Online_store485353")],
+        [InlineKeyboardButton("🔵 قناة تيليجرام", url="https://t.me/Online_store485353")],
         [InlineKeyboardButton("🟢 قناة واتساب", url="https://whatsapp.com/channel/0029Vb74xLN1yT2ArsVMwS2B")],
-        [InlineKeyboardButton("🎵 تيك توك", url="https://www.tiktok.com/@saddam33000")],
-        [InlineKeyboardButton("📘 فيسبوك", url="https://www.facebook.com/share/17hWP9gCDd/")],
+        [InlineKeyboardButton("🎵 TikTok", url="https://www.tiktok.com/@saddam33000")],
+        [InlineKeyboardButton("📘 Facebook", url="https://www.facebook.com/share/17hWP9gCDd/")],
         [InlineKeyboardButton("✅ تم الاشتراك", callback_data="check")]
     ]
 
@@ -47,38 +80,59 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
         parse_mode="Markdown"
     )
 
-# ===== التحقق من الاشتراك =====
+# ===== تحقق الاشتراك =====
 async def check_sub(update: Update, context: ContextTypes.DEFAULT_TYPE):
     query = update.callback_query
     await query.answer()
 
-    user_id = query.from_user.id
-    member = await context.bot.get_chat_member(CHANNEL_USERNAME, user_id)
+    member = await context.bot.get_chat_member(CHANNEL_USERNAME, query.from_user.id)
 
     if member.status in ["member", "administrator", "creator"]:
-        menu_keyboard = [
-            [InlineKeyboardButton("🎮 شحن الألعاب", callback_data="games")],
-            [InlineKeyboardButton("💎 TikTok Coins", callback_data="tiktok")],
-            [InlineKeyboardButton("💻 خدمات رقمية", callback_data="digital")],
-            [InlineKeyboardButton("📞 تواصل معنا", url="https://t.me/Saddammed")]
+        menu = [
+            [
+                InlineKeyboardButton("🔥 شحن ألعاب", callback_data="games"),
+                InlineKeyboardButton("🛒 منتجات رقمية", callback_data="digital")
+            ],
+            [
+                InlineKeyboardButton("🌐 تصميم مواقع", callback_data="web")
+            ],
+            [
+                InlineKeyboardButton("🌍 موقعنا الرسمي", url="https://digital-service-hub--sidimed485353.replit.app")
+            ]
         ]
 
         await query.edit_message_text(
-            AFTER_TEXT.format(name=query.from_user.first_name),
-            reply_markup=InlineKeyboardMarkup(menu_keyboard),
+            MAIN_MENU_TEXT.format(name=query.from_user.first_name),
+            reply_markup=InlineKeyboardMarkup(menu),
             parse_mode="Markdown"
         )
     else:
-        await query.answer("❌ اشترك في قناة التليجرام أولاً", show_alert=True)
+        await query.answer("❌ اشترك في القناة أولاً", show_alert=True)
 
-# ===== تشغيل البوت =====
+# ===== القوائم =====
+async def menus(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    query = update.callback_query
+    await query.answer()
+
+    back = InlineKeyboardMarkup([
+        [InlineKeyboardButton("⬅️ رجوع", callback_data="check")]
+    ])
+
+    if query.data == "games":
+        await query.edit_message_text(GAMES_TEXT, reply_markup=back, parse_mode="Markdown")
+
+    elif query.data == "digital":
+        await query.edit_message_text(DIGITAL_TEXT, reply_markup=back, parse_mode="Markdown")
+
+    elif query.data == "web":
+        await query.edit_message_text(WEB_TEXT, reply_markup=back, parse_mode="Markdown")
+
 def main():
     app = ApplicationBuilder().token(TOKEN).build()
-
     app.add_handler(CommandHandler("start", start))
-    app.add_handler(CallbackQueryHandler(check_sub))
-
+    app.add_handler(CallbackQueryHandler(check_sub, pattern="^check$"))
+    app.add_handler(CallbackQueryHandler(menus))
     app.run_polling()
 
-if __name__ == "__main__":
+if name == "__main__":
     main()
